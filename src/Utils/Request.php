@@ -8,7 +8,7 @@ class Request
 {
     public $curl;
 
-    protected $baseUri = 'https://api.dinero.dk/v1';
+    protected $baseUri = 'https://api.dinero.dk/v1.1';
     protected $authUri = 'https://authz.dinero.dk/dineroapi/oauth/token';
 
     public function __construct($clientId = '', $clientSecret = '', $token = null, $org = null, $clientConfig = [])
