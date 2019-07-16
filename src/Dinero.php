@@ -34,14 +34,14 @@ class Dinero
     private $authToken;
     private $org;
 
-    public function __construct($clientId, $clientSecret, $token = null, $org = null, $clientConfig = [])
+    public function __construct($clientId, $clientSecret, $token = null, $org = null, $clientConfig = [], $baseUrl = null)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->authToken = $token;
         $this->org = $org;
 
-        $this->request = new Request($clientId, $clientSecret, $this->authToken, $this->org, $clientConfig);
+        $this->request = new Request($clientId, $clientSecret, $this->authToken, $this->org, $clientConfig, $baseUrl);
     }
 
     public function setAuth($token, $org = null)
