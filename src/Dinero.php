@@ -72,6 +72,16 @@ class Dinero
         return $this->request->getBaseUrl();
     }
 
+    public function setBaseUrl($url) {
+
+        $this->request->setBaseUrl($url);
+    }
+
+    public function setAuthUrl($url) {
+
+        $this->request->setAuthUrl($url);
+    }
+
     public function auth($apiKey, $orgId = null)
     {
         try {
