@@ -12,4 +12,10 @@ class EntryAccountRequestBuilder extends RequestBuilder
 
 		parent::__construct( $builder );
 	}
+
+    public function categoryFilter( $category ) {
+        $this->parameters['categoryFilter'] = ucfirst($category);
+
+        return $this;
+    }
 }
