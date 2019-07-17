@@ -67,6 +67,11 @@ class Dinero
         return $this->org;
     }
 
+    public function getBaseUrl()
+    {
+        return $this->request->getBaseUrl();
+    }
+
     public function auth($apiKey, $orgId = null)
     {
         try {
