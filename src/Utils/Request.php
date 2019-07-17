@@ -13,7 +13,7 @@ class Request
 
     public function __construct($clientId = '', $clientSecret = '', $token = null, $org = null, $clientConfig = [], $base_uri = null)
     {
-        $this->baseUri = $base_uri ?? 'https://api.dinero.dk/v1';
+        $this->baseUri = $base_uri !== null ? $base_uri : 'https://api.dinero.dk/v1';
 
         $encodedClientIdAndSecret = base64_encode("{$clientId}:{$clientSecret}");
 
