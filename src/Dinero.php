@@ -34,12 +34,15 @@ class Dinero
     private $authToken;
     private $org;
 
+    private $baseUri;
+
     public function __construct($clientId, $clientSecret, $token = null, $org = null, $clientConfig = [], $baseUrl = null)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->authToken = $token;
         $this->org = $org;
+        $this->baseUri = $baseUrl;
 
         $this->request = new Request($clientId, $clientSecret, $this->authToken, $this->org, $clientConfig, $baseUrl);
     }
@@ -49,7 +52,7 @@ class Dinero
         $this->authToken = $token;
         $this->org = $org;
 
-        $this->request = new Request($this->clientId, $this->clientSecret, $this->authToken, $this->org);
+        $this->request = new Request($this->clientId, $this->clientSecret, $this->authToken, $this->org, [], $this->baseUri);
     }
 
     public function getAuthToken()
