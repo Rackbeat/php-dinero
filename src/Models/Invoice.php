@@ -50,7 +50,19 @@ class Invoice extends Model
 
 	public $Address;
 
+    /**
+     * @return PaymentRequestBuilder
+     */
 	public function payments() {
 		return new PaymentRequestBuilder( new PaymentBuilder( $this->request, "invoices/{$this->Guid}/payments" ) );
 	}
+
+    /**
+     * @param $orgId
+     * @return mixed
+     */
+	public function book($orgId) {
+
+	    return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $this->{$this->primaryKey} . '/book');
+    }
 }
