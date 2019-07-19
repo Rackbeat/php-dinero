@@ -63,6 +63,12 @@ class Invoice extends Model
      */
 	public function book($orgId) {
 
-	    return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $this->{$this->primaryKey} . '/book');
+	    return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $this->{$this->primaryKey} . '/book', [
+
+	        'json' => [
+
+	            'Timestamp' => $this->{'TimeStamp'},
+            ]
+        ]);
     }
 }
