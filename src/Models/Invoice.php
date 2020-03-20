@@ -71,4 +71,15 @@ class Invoice extends Model
             ]
         ]);
     }
+
+    /**
+     * Send invoice to customer by email @todo Add possible email parameters from https://api.dinero.dk/openapi/index.html#tag/Invoices/paths/~1v1~1{organizationId}~1invoices~1{guid}~1email/post
+     *
+     * @param $orgId
+     * @return mixed
+     */
+    public function send($orgId)
+    {
+        return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $this->{$this->primaryKey} . '/email');
+    }
 }
