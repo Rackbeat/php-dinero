@@ -14,7 +14,7 @@ class PurchaseVoucher extends Model
     public $Status;
     public $ContactGuid;
     public $Guid;
-    public $TimeStamp;
+    public $Timestamp;
     public $VoucherNumber;
     public $FileGuid;
     public $RegionKey;
@@ -36,7 +36,7 @@ class PurchaseVoucher extends Model
 
             'json' => [
 
-                'Timestamp' => $this->{'TimeStamp'},
+                'Timestamp' => $this->{'Timestamp'},
             ]
         ]);
     }
