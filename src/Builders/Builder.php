@@ -104,6 +104,11 @@ class Builder
 		return $this->entity;
 	}
 
+	public function setEntity($value)
+    {
+        $this->entity = $value;
+    }
+
 	public function getCollectionName() {
 		return isset( $this->collectionName ) ? $this->collectionName : 'Collection';
 	}

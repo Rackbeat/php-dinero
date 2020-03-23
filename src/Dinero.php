@@ -10,6 +10,7 @@ use LasseRafn\Dinero\Builders\DepositAccountBuilder;
 use LasseRafn\Dinero\Builders\EntryAccountBuilder;
 use LasseRafn\Dinero\Builders\FileBuilder;
 use LasseRafn\Dinero\Builders\InvoiceBuilder;
+use LasseRafn\Dinero\Builders\LedgerItemBuilder;
 use LasseRafn\Dinero\Builders\PaymentBuilder;
 use LasseRafn\Dinero\Builders\ProductBuilder;
 use LasseRafn\Dinero\Builders\PurchaseVoucherBuilder;
@@ -155,5 +156,13 @@ class Dinero
     public function files(): FileBuilder
     {
         return new FileBuilder($this->request);
+    }
+
+    /**
+     * @return LedgerItemBuilder
+     */
+    public function ledgerItems(): LedgerItemBuilder
+    {
+        return new LedgerItemBuilder($this->request);
     }
 }
