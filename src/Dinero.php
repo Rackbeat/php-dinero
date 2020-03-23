@@ -8,6 +8,7 @@ use LasseRafn\Dinero\Builders\ContactBuilder;
 use LasseRafn\Dinero\Builders\CreditnoteBuilder;
 use LasseRafn\Dinero\Builders\DepositAccountBuilder;
 use LasseRafn\Dinero\Builders\EntryAccountBuilder;
+use LasseRafn\Dinero\Builders\FileBuilder;
 use LasseRafn\Dinero\Builders\InvoiceBuilder;
 use LasseRafn\Dinero\Builders\PaymentBuilder;
 use LasseRafn\Dinero\Builders\ProductBuilder;
@@ -146,5 +147,13 @@ class Dinero
     {
 
         return new PurchaseVoucherRequestBuilder(new PurchaseVoucherBuilder($this->request));
+    }
+
+    /**
+     * @return FileBuilder
+     */
+    public function files(): FileBuilder
+    {
+        return new FileBuilder($this->request);
     }
 }
