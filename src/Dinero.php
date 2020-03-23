@@ -11,6 +11,7 @@ use LasseRafn\Dinero\Builders\EntryAccountBuilder;
 use LasseRafn\Dinero\Builders\FileBuilder;
 use LasseRafn\Dinero\Builders\InvoiceBuilder;
 use LasseRafn\Dinero\Builders\LedgerItemBuilder;
+use LasseRafn\Dinero\Builders\ManualVoucherBuilder;
 use LasseRafn\Dinero\Builders\PaymentBuilder;
 use LasseRafn\Dinero\Builders\ProductBuilder;
 use LasseRafn\Dinero\Builders\PurchaseVoucherBuilder;
@@ -21,6 +22,7 @@ use LasseRafn\Dinero\Requests\CreditnoteRequestBuilder;
 use LasseRafn\Dinero\Requests\DepositAccountRequestBuilder;
 use LasseRafn\Dinero\Requests\EntryAccountRequestBuilder;
 use LasseRafn\Dinero\Requests\InvoiceRequestBuilder;
+use LasseRafn\Dinero\Requests\ManualVoucherRequestBuilder;
 use LasseRafn\Dinero\Requests\PaymentRequestBuilder;
 use LasseRafn\Dinero\Requests\ProductRequestBuilder;
 use LasseRafn\Dinero\Requests\PurchaseVoucherRequestBuilder;
@@ -164,5 +166,13 @@ class Dinero
     public function ledgerItems(): LedgerItemBuilder
     {
         return new LedgerItemBuilder($this->request);
+    }
+
+    /**
+     * @return ManualVoucherRequestBuilder
+     */
+    public function manualVouchers(): ManualVoucherRequestBuilder
+    {
+        return new ManualVoucherRequestBuilder(new ManualVoucherBuilder($this->request));
     }
 }
