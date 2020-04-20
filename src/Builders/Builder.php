@@ -80,7 +80,7 @@ class Builder
 	 */
 	public function create( $data = [], $fakeAttributes = true ) {
 		try {
-			$response = $this->request->curl->post( (string)($this->getEntity()), [
+			$response = $this->request->curl->post( "{$this->getEntity()}", [
 				'json' => $data,
 			] );
 
