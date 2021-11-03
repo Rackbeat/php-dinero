@@ -248,6 +248,14 @@ class RequestBuilder
 		return $this->builder->create( $data, $fakeAttributes );
 	}
 
+    public function update($id, $data) {
+        return $this->builder->update($id, $data);
+    }
+
+    public function delete($id) {
+        $this->builder->delete($id);
+    }
+
 	/**
 	 * Returns the set page.
 	 *
