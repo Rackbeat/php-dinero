@@ -7,7 +7,7 @@ use LasseRafn\Dinero\Utils\Model;
 class LedgerItem extends Model
 {
     protected $entity = 'ledgeritems';
-    protected $primaryKey = 'Id';
+    public $primaryKey = 'Id';
 
     public $id;
     public $VoucherNumber;

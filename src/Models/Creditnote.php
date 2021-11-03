@@ -7,7 +7,7 @@ use LasseRafn\Dinero\Utils\Model;
 class Creditnote extends Model
 {
 	protected $entity     = 'sales/creditnotes';
-	protected $primaryKey = 'Guid';
+	public $primaryKey = 'Guid';
 
 	public $CreditNoteFor;
 	public $Status;

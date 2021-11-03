@@ -8,7 +8,7 @@ class ManualVoucher extends Model
 {
     // Manuel is not typo, that's how it is in docs
     protected $entity = 'vouchers/manuel';
-    protected $primaryKey = 'Guid';
+    public $primaryKey = 'Guid';
 
     public $VoucherDate;
     public $Status;

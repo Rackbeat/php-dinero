@@ -9,7 +9,7 @@ use LasseRafn\Dinero\Utils\Model;
 class Invoice extends Model
 {
 	protected $entity     = 'invoices';
-	protected $primaryKey = 'Guid';
+	public $primaryKey = 'Guid';
 
 	public $PaymentDate;
 	public $PaymentStatus;

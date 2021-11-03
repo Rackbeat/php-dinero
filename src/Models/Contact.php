@@ -7,7 +7,7 @@ use LasseRafn\Dinero\Utils\Model;
 class Contact extends Model
 {
     protected $entity = 'contacts';
-    protected $primaryKey = 'ContactGuid';
+    public $primaryKey = 'ContactGuid';
 
     public $ContactGuid;
     public $CreatedAt;

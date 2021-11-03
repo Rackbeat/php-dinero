@@ -5,7 +5,7 @@ use LasseRafn\Dinero\Utils\Model;
 class Payment extends Model
 {
     protected $entity     = 'payments';
-    protected $primaryKey = 'Guid';
+    public $primaryKey = 'Guid';
 
     public $Guid;
     public $DepositAccountNumber;
