@@ -11,7 +11,7 @@ use LasseRafn\Dinero\Responses\ResponseInterface;
 use LasseRafn\Dinero\Utils\Model;
 use LasseRafn\Dinero\Utils\Request;
 
-class Builder
+abstract class Builder
 {
     protected $request;
 	protected $entity;
@@ -47,9 +47,10 @@ class Builder
 	 *
 	 * @return ResponseInterface
 	 */
-	public function get( $parameters = '' ) {
+	public function get($parameters = '')
+    {
 		try {
-			$dineroApiResponse          = $this->request->curl->get( "{$this->entity}{$parameters}" );
+			$dineroApiResponse = $this->request->curl->get( "{$this->entity}{$parameters}" );
 			$response = new $this->responseClass( $dineroApiResponse, $this->getCollectionName() );
 		} catch ( ClientException $exception ) {
 			throw new DineroRequestException( $exception );
@@ -57,10 +58,8 @@ class Builder
 			throw new DineroServerException( $exception );
 		}
 
-		$request = $this->request;
-
-		$response->setItems( array_map( function ( $item ) use ( $request ) {
-			return new $this->model( $request, $item );
+		$response->setItems(array_map(function ($item) {
+			return new $this->model($item);
 		}, $response->items ) );
 
 		return $response;
@@ -78,7 +77,7 @@ class Builder
 	 *
 	 * @return Model
 	 */
-	public function create( $data = [], $fakeAttributes = true ) {
+	public function create($data = [], $fakeAttributes = true) {
 		try {
 			$response = $this->request->curl->post( "{$this->getEntity()}", [
 				'json' => $data,
@@ -92,13 +91,44 @@ class Builder
 
 			$mergedData = array_merge( $responseData, $fakeAttributes ? $data : $freshData );
 
-			return new $this->model( $this->request, $mergedData );
+			return new $this->model($mergedData);
 		} catch ( ClientException $exception ) {
 			throw new DineroRequestException( $exception );
 		} catch ( ServerException $exception ) {
 			throw new DineroServerException( $exception );
 		}
 	}
+
+    /**
+     * Send a request to the API to update the model.
+     *
+     * @param array $data
+     *
+     * @return mixed
+     */
+    public function update($id, $data = [])
+    {
+        $response = $this->request->curl->put("{$this->getEntity()}/{$id}", [
+            'json' => $data,
+        ]);
+
+        $responseData = json_decode($response->getBody()->getContents());
+
+        return new $this->model($responseData);
+    }
+
+
+    /**
+     * Send a request to the API to delete the model.
+     *
+     * @param $id
+     *
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        return $this->request->curl->delete("{$this->getEntity()}/{$id}");
+    }
 
 	public function getEntity() {
 		return $this->entity;

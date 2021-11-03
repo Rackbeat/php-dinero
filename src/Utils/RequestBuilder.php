@@ -2,6 +2,7 @@
 
 namespace LasseRafn\Dinero\Utils;
 
+use Generator;
 use LasseRafn\Dinero\Builders\Builder;
 use LasseRafn\Dinero\Responses\PaginatedResponse;
 
@@ -108,9 +109,10 @@ class RequestBuilder
 	/**
 	 * Build URL parameters.
 	 *
-	 * @return array
+	 * @return string
 	 */
-	private function buildParameters() {
+	private function buildParameters()
+    {
 		$parameters = http_build_query( $this->parameters );
 
 		if ( $parameters !== '' ) {
@@ -126,7 +128,7 @@ class RequestBuilder
 	 * @return PaginatedResponse
 	 */
 	public function get() {
-		$response = $this->builder->get( $this->buildParameters() );
+		$response = $this->builder->get($this->buildParameters());
 
 		return $response;
 	}
@@ -172,6 +174,44 @@ class RequestBuilder
 
 		return $items;
 	}
+
+    /**
+     * It will iterate over all pages until it does not receive empty response, you can also set query parameters,
+     * Return a Generator that you' handle first before querying the next offset
+     *
+     * @param int $chunkSize
+     *
+     * @return Generator
+     */
+    public function allWithGenerator(int $chunkSize = 20)
+    {
+        $this->page(0);
+
+        $response = function () use ($chunkSize) {
+            $this->perPage($chunkSize);
+            // will also cast to the right model items
+            return $this->builder->get($this->buildParameters());
+        };
+
+        do {
+            $resp = $response();
+
+            $countResults = count($resp->items);
+            if ($countResults === 0) {
+                break;
+            }
+            // make a generator of the results and return them
+            // so the logic will handle them before the next iteration
+            // in order to avoid memory leaks
+            foreach ($resp->items as $result) {
+                yield $result;
+            }
+
+            unset($resp);
+
+            $this->page( $this->getPage() + 1 );
+        } while ($countResults === $chunkSize);
+    }
 
 	/**
 	 * Send a request to the API to get a single model.

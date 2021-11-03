@@ -7,12 +7,9 @@ class Model
     protected $entity;
     protected $primaryKey;
     protected $modelClass = self::class;
-    protected $request;
 
-    public function __construct(Request $request, $data = [])
+    public function __construct($data = [])
     {
-        $this->request = $request;
-
         $data = (array) $data;
 
         foreach ($data as $attribute => $value) {
@@ -59,37 +56,6 @@ class Model
     protected function setAttribute($attribute, $value)
     {
         $this->{$attribute} = $value;
-    }
-
-    /**
-     * Send a request to the API to delete the model.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function delete()
-    {
-        // todo test
-        return $this->request->curl->delete("{$this->entity}/{$this->{$this->primaryKey}}");
-    }
-
-    /**
-     * Send a request to the API to update the model.
-     *
-     * @param array $data
-     *
-     * @return mixed
-     */
-    public function update($data = [])
-    {
-        $data = array_merge($this->toArray(), $data);
-
-        $response = $this->request->curl->put("{$this->entity}/{$this->{$this->primaryKey}}", [
-            'json' => $data,
-        ]);
-
-        $responseData = json_decode($response->getBody()->getContents());
-
-        return new $this->modelClass($this->request, $responseData);
     }
 
     /**
