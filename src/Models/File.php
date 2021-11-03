@@ -9,7 +9,7 @@ use LasseRafn\Dinero\Utils\Model;
 class File extends Model
 {
 	protected $entity     = 'files';
-	protected $primaryKey = 'Guid';
+	public $primaryKey = 'Guid';
 
 	public $Guid;
 }

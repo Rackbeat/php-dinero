@@ -7,7 +7,7 @@ use LasseRafn\Dinero\Utils\Model;
 class Product extends Model
 {
     protected $entity = 'products';
-    protected $primaryKey = 'ProductGuid';
+    public $primaryKey = 'ProductGuid';
 
     public $CreatedAt;
     public $UpdatedAt;

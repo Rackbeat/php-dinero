@@ -7,7 +7,7 @@ use LasseRafn\Dinero\Utils\Model;
 class PurchaseVoucher extends Model
 {
     protected $entity = 'vouchers/purchase';
-    protected $primaryKey = 'Guid';
+    public $primaryKey = 'Guid';
 
     public $PaymentDate;
     public $VoucherDate;
