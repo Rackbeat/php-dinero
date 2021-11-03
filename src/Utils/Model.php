@@ -5,7 +5,7 @@ namespace LasseRafn\Dinero\Utils;
 class Model
 {
     protected $entity;
-    protected $primaryKey;
+    public $primaryKey;
     protected $modelClass = self::class;
 
     public function __construct($data = [])
