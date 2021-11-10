@@ -34,7 +34,7 @@ abstract class Builder
 			$response     = $this->request->curl->get( "{$this->entity}/{$id}" );
 			$responseData = json_decode( $response->getBody()->getContents() );
 
-			return new $this->model( $this->request, $responseData );
+			return new $this->model($responseData);
 		} catch ( ClientException $exception ) {
 			throw new DineroRequestException( $exception );
 		} catch ( ServerException $exception ) {
