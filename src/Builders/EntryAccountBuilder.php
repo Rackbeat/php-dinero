@@ -29,7 +29,7 @@ class EntryAccountBuilder extends Builder
         $request = $this->request;
 
         $items = array_map(function ($item) use ($request) {
-            return new $this->model($request, $item);
+            return new $this->model($item);
         }, $jsonResponse);
 
         return (object)['items' => $items];
