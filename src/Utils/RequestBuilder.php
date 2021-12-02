@@ -309,4 +309,9 @@ class RequestBuilder
 	public function getParameters() {
 		return $this->parameters;
 	}
+
+    public function getBuilder()
+    {
+        return $this->builder;
+    }
 }
