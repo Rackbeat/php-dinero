@@ -40,11 +40,14 @@ class InvoiceBuilder extends Builder
      *
      * @param $orgId
      * @param $id
+     * @param array $input
      *
      * @return mixed
      */
-    public function send($orgId, $id)
+    public function send($orgId, $id, array $input)
     {
-        return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $id . '/email');
+        return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $id . '/email', [
+            'json' => $input
+        ]);
     }
 }
