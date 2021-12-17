@@ -209,6 +209,11 @@ class RequestBuilder
 
             unset($resp);
 
+            // will delay the next page request for 1 second to make sure it won't throttle on dinero side
+            // sleep makes sense here as this will loop for one connection and total number of connections
+            // is limited by total number of long-redis-connection processes
+            sleep(1);
+
             $this->page( $this->getPage() + 1 );
         } while ($countResults === $chunkSize);
     }
