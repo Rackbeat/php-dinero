@@ -17,7 +17,7 @@ class EntryAccountBuilder extends Builder
     public function get($parameters = '')
     {
         try {
-            $dineroApiResponse = $this->request->curl->get("{$this->entity}{$parameters}");
+            $dineroApiResponse = $this->request->client->fetchEndPoint('get', config('dinero.api_url')."{$this->entity}{$parameters}");
 
             $jsonResponse = json_decode($dineroApiResponse->getBody()->getContents());
         } catch (ClientException $exception) {

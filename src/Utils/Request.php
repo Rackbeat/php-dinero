@@ -3,36 +3,33 @@
 namespace LasseRafn\Dinero\Utils;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use LasseRafn\Dinero\Exceptions\DineroRequestException;
+use LasseRafn\Dinero\Exceptions\DineroServerException;
 
 class Request
 {
-    /** @var Client  */
-    public $curl;
-    /** @var string|null  */
-    protected $baseUri;
-    /** @var string  */
-    protected $authUri = 'https://authz.dinero.dk/dineroapi/oauth/token';
+    /**
+     * @var \GuzzleHttp\Client
+     */
+    public $client;
 
-    public function __construct($clientId = '', $clientSecret = '', $token = null, $org = null, $clientConfig = [], $base_uri = null)
+    /**
+     * Request constructor.
+     *
+     * @param string $baseUri
+     * @param array  $options
+     * @param array  $headers
+     */
+    public function __construct($baseUri, $options = [], $headers = [])
     {
-        $this->baseUri = ($base_uri ?? 'https://api.dinero.dk/v1') . ($org !== null ? "/{$org}/" : '');
+        $options = array_merge([
+            'base_uri' => $baseUri,
+            'headers' => $headers,
+        ], $options);
 
-        $encodedClientIdAndSecret = base64_encode("{$clientId}:{$clientSecret}");
-
-        $headers = [];
-
-        if ($token !== null) {
-            $headers['Authorization'] = "Bearer {$token}";
-            $headers['Content-Type'] = 'application/json';
-        } else {
-            $headers['Authorization'] = "Basic {$encodedClientIdAndSecret}";
-            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        }
-
-        $this->curl = new Client(array_merge_recursive([
-            'base_uri' => $this->baseUri,
-            'headers'  => $headers,
-        ], $clientConfig));
+        $this->client = new Client($options);
     }
 
     /**
@@ -67,5 +64,32 @@ class Request
     public function getBaseUrl() {
 
         return $this->baseUri;
+    }
+
+    public function fetchEndPoint($method, $url = null)
+    {
+        return $this->handleWithExceptions(function () use ($method, $url) {
+            $response = $this->client->{$method}($this->baseUri.($url ?? ''), $this->options);
+
+            return json_decode((string) $response->getBody());
+        });
+    }
+
+    /**
+     * @param $callback
+     *
+     * @return mixed
+     * @throws DineroRequestException
+     * @throws DineroServerException
+     */
+    public function handleWithExceptions($callback)
+    {
+        try {
+            return $callback();
+        } catch (ClientException $exception) {
+            throw new DineroRequestException($exception);
+        } catch (ServerException $exception) {
+            throw new DineroServerException($exception);
+        }
     }
 }

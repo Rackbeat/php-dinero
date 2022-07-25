@@ -30,25 +30,27 @@ use LasseRafn\Dinero\Utils\Request;
 
 class Dinero
 {
+    /**
+     * @var Request
+     */
     protected $request;
+    protected $baseUri;
+    protected $options;
+    protected $header;
 
-    private $clientId;
-    private $clientSecret;
-
-    private $authToken;
-    private $org;
-
-    private $baseUri;
-
-    public function __construct($clientId, $clientSecret, $token = null, $org = null, $clientConfig = [], $baseUrl = null)
+    /**
+     * Rackbeat constructor.
+     *
+     * @param null  $baseUri Base URI
+     * @param array $options Custom Guzzle options
+     * @param array $headers Custom Guzzle headers
+     */
+    public function __construct($baseUri, $options = [], $headers = [])
     {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->authToken = $token;
-        $this->org = $org;
-        $this->baseUri = $baseUrl;
-
-        $this->request = new Request($clientId, $clientSecret, $this->authToken, $this->org, $clientConfig, $baseUrl);
+        $this->baseUri = $baseUri ?? config('dinero.api_url');
+        $this->options = $options;
+        $this->headers = $headers;
+        $this->initRequest($this->baseUri, $this->options, $this->headers);
     }
 
     public function setAuth($token, $org = null)
@@ -175,4 +177,36 @@ class Dinero
     {
         return new ManualVoucherRequestBuilder(new ManualVoucherBuilder($this->request));
     }
+
+    /**
+     * @param       $baseUri
+     * @param array $options
+     * @param array $headers
+     */
+    private function initRequest($baseUri, $options = [], $headers = []): void
+    {
+        $this->request = new Request($baseUri, $options, $headers);
+    }
+
+    /**
+     * @param $method
+     * @param $url
+     *
+     * @return mixed
+     * @throws DineroRequestException
+     * @throws DineroServerException
+     */
+    public function fetchEndPoint($method, $url = null)
+    {
+        return $this->request->handleWithExceptions(function () use ($method, $url) {
+            $response = $this->request->client->{$method}($this->baseUri.($url ?? ''), $this->options);
+            return json_decode((string) $response->getBody());
+        });
+    }
+
+    public function getClient()
+    {
+        return $this->client;
+    }
+
 }

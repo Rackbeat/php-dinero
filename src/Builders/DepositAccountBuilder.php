@@ -17,7 +17,7 @@ class DepositAccountBuilder extends Builder
     public function get($parameters = '')
     {
         try {
-            $dineroApiResponse = $this->request->curl->get("{$this->entity}{$parameters}");
+            $dineroApiResponse = $this->request->client->fetchEndPoint('get', "{$this->entity}{$parameters}");
 
             $jsonResponse = json_decode($dineroApiResponse->getBody()->getContents());
         } catch (ClientException $exception) {
