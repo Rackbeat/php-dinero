@@ -14,6 +14,9 @@ class Request
      * @var \GuzzleHttp\Client
      */
     public $client;
+    protected $baseUri;
+    protected $options;
+    protected $organizationID;
 
     /**
      * Request constructor.
@@ -22,32 +25,17 @@ class Request
      * @param array  $options
      * @param array  $headers
      */
-    public function __construct($baseUri, $options = [], $headers = [])
+    public function __construct($baseUri, $options = [], $headers = [], $org = null)
     {
+        $this->options = $options;
+        $this->organizationID = $org;
+        $this->baseUri = $baseUri . $this->organizationID.'/';
         $options = array_merge([
             'base_uri' => $baseUri,
             'headers' => $headers,
         ], $options);
 
         $this->client = new Client($options);
-    }
-
-    /**
-     * Return a string with the oAuth url.
-     *
-     * @return string
-     */
-    public function getAuthUrl()
-    {
-        return $this->authUri;
-    }
-
-    /**
-     * @param $url string
-     */
-    public function setAuthUrl($url) {
-
-        $this->authUri = $url;
     }
 
     /**

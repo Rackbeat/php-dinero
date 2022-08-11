@@ -2,6 +2,8 @@
 
 namespace LasseRafn\Dinero\Builders;
 
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
 use LasseRafn\Dinero\Models\EntryAccount;
@@ -17,9 +19,7 @@ class EntryAccountBuilder extends Builder
     public function get($parameters = '')
     {
         try {
-            $dineroApiResponse = $this->request->client->fetchEndPoint('get', config('dinero.api_url')."{$this->entity}{$parameters}");
-
-            $jsonResponse = json_decode($dineroApiResponse->getBody()->getContents());
+            $dineroApiResponse = $this->request->fetchEndPoint('get', "{$this->entity}{$parameters}");
         } catch (ClientException $exception) {
             throw new DineroRequestException($exception);
         } catch (ServerException $exception) {
@@ -30,7 +30,7 @@ class EntryAccountBuilder extends Builder
 
         $items = array_map(function ($item) use ($request) {
             return new $this->model($item);
-        }, $jsonResponse);
+        }, $dineroApiResponse);
 
         return (object)['items' => $items];
     }

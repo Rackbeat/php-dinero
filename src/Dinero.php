@@ -2,8 +2,6 @@
 
 namespace LasseRafn\Dinero;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
 use LasseRafn\Dinero\Builders\ContactBuilder;
 use LasseRafn\Dinero\Builders\CreditnoteBuilder;
 use LasseRafn\Dinero\Builders\DepositAccountBuilder;
@@ -36,7 +34,8 @@ class Dinero
     protected $request;
     protected $baseUri;
     protected $options;
-    protected $header;
+    protected $headers;
+    protected $organizationID;
 
     /**
      * Rackbeat constructor.
@@ -45,35 +44,18 @@ class Dinero
      * @param array $options Custom Guzzle options
      * @param array $headers Custom Guzzle headers
      */
-    public function __construct($baseUri, $options = [], $headers = [])
+    public function __construct($baseUri, $options = [], $headers = [], $org = null)
     {
         $this->baseUri = $baseUri ?? config('dinero.api_url');
         $this->options = $options;
         $this->headers = $headers;
-        $this->initRequest($this->baseUri, $this->options, $this->headers);
-    }
-
-    public function setAuth($token, $org = null)
-    {
-        $this->authToken = $token;
-        $this->org = $org;
-
-        $this->request = new Request($this->clientId, $this->clientSecret, $this->authToken, $this->org, [], $this->baseUri);
-    }
-
-    public function getAuthToken()
-    {
-        return $this->authToken;
-    }
-
-    public function getAuthUrl()
-    {
-        return $this->request->getAuthUrl();
+        $this->organizationID = $org;
+        $this->initRequest($this->baseUri, $this->options, $this->headers, $this->organizationID);
     }
 
     public function getOrgId()
     {
-        return $this->org;
+        return $this->organizationID;
     }
 
     public function getBaseUrl()
@@ -86,33 +68,6 @@ class Dinero
         $this->request->setBaseUrl($url);
     }
 
-    public function setAuthUrl($url) {
-
-        $this->request->setAuthUrl($url);
-    }
-
-    public function auth($apiKey, $orgId = null)
-    {
-        try {
-            $response = json_decode($this->request->curl->post($this->request->getAuthUrl(), [
-                'form_params' => [
-                    'grant_type' => 'password',
-                    'scope'      => 'read write',
-                    'username'   => $apiKey,
-                    'password'   => $apiKey,
-                ],
-            ])->getBody()->getContents());
-
-            $this->setAuth($response->access_token, $orgId);
-
-            return $response;
-        } catch (ClientException $exception) {
-            throw new DineroRequestException($exception);
-        } catch (ServerException $exception) {
-            throw new DineroServerException($exception);
-        }
-    }
-
     public function contacts()
     {
         return new ContactRequestBuilder(new ContactBuilder($this->request));
@@ -123,10 +78,10 @@ class Dinero
         return new InvoiceRequestBuilder(new InvoiceBuilder($this->request));
     }
 
-	public function paymentsForInvoice($invoiceId)
-	{
-		return new PaymentRequestBuilder(new PaymentBuilder($this->request, "invoices/{$invoiceId}/payments"));
-	}
+    public function paymentsForInvoice($invoiceId)
+    {
+        return new PaymentRequestBuilder(new PaymentBuilder($this->request, "invoices/{$invoiceId}/payments"));
+    }
 
     public function products()
     {
@@ -138,8 +93,8 @@ class Dinero
         return new CreditnoteRequestBuilder(new CreditnoteBuilder($this->request));
     }
 
-    public function entryAccounts() {
-
+    public function entryAccounts()
+    {
         return new EntryAccountRequestBuilder(new EntryAccountBuilder($this->request));
     }
 
@@ -180,12 +135,13 @@ class Dinero
 
     /**
      * @param       $baseUri
-     * @param array $options
-     * @param array $headers
+     * @param  array  $options
+     * @param  array  $headers
+     * @param  null  $organizationID
      */
-    private function initRequest($baseUri, $options = [], $headers = []): void
+    private function initRequest($baseUri, $options = [], $headers = [], $organizationID = null)
     {
-        $this->request = new Request($baseUri, $options, $headers);
+        $this->request = new Request($baseUri, $options, $headers, $organizationID);
     }
 
     /**
@@ -206,7 +162,7 @@ class Dinero
 
     public function getClient()
     {
-        return $this->client;
+        return $this->request->client;
     }
 
 }
