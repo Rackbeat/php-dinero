@@ -142,11 +142,6 @@ class Dinero
      */
     private function initRequest($baseUri, $options = [], $headers = [], $organizationID = null)
     {
-        Log::channel('debug')->debug('$baseUri: ' . json_encode($baseUri));
-        Log::channel('debug')->debug('$options: ' . json_encode($options));
-        Log::channel('debug')->debug('$headers: ' . json_encode($headers));
-        Log::channel('debug')->debug('$organizationID: ' . json_encode($organizationID));
-
         $this->request = new Request($baseUri, $options, $headers, $organizationID);
     }
 
