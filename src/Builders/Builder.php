@@ -31,10 +31,8 @@ abstract class Builder
      */
     public function find( $id ) {
         try {
-            $response     = $this->request->client->fetchEndPoint( 'get', "{$this->entity}/{$id}" );
-            $responseData = json_decode( $response->getBody()->getContents() );
-
-            return new $this->model($responseData);
+            $response     = $this->request->fetchEndPoint( 'get', "{$this->entity}/{$id}" );
+            return new $this->model($response);
         } catch ( ClientException $exception ) {
             throw new DineroRequestException( $exception );
         } catch ( ServerException $exception ) {
@@ -50,7 +48,7 @@ abstract class Builder
     public function get($parameters = '')
     {
         try {
-            $dineroApiResponse = $this->request->client->fetchEndPoint( 'get', "{$this->entity}{$parameters}" );
+            $dineroApiResponse = $this->request->fetchEndPoint( 'get', "{$this->entity}{$parameters}" );
             $response = new $this->responseClass( $dineroApiResponse, $this->getCollectionName() );
         } catch ( ClientException $exception ) {
             throw new DineroRequestException( $exception );
@@ -79,17 +77,14 @@ abstract class Builder
      */
     public function create($data = [], $fakeAttributes = true) {
         try {
-            $response = $this->request->client->fetchEndPoint( 'post', "{$this->getEntity()}", [
+            $response = $this->request->fetchEndPoint( 'post', "{$this->getEntity()}", [
                 'json' => $data,
             ] );
-
-            $responseData = (array) json_decode( $response->getBody()->getContents() );
-
             if ( ! $fakeAttributes ) {
-                $freshData = (array) $this->find( $responseData[ ( new $this->model( $this->request ) )->getPrimaryKey() ] );
+                $freshData = (array) $this->find( $response[ ( new $this->model( $this->request ) )->getPrimaryKey() ] );
             }
 
-            $mergedData = array_merge( $responseData, $fakeAttributes ? $data : $freshData );
+            $mergedData = array_merge( $response, $fakeAttributes ? $data : $freshData );
 
             return new $this->model($mergedData);
         } catch ( ClientException $exception ) {
@@ -108,7 +103,7 @@ abstract class Builder
      */
     public function update($id, $data = [])
     {
-        $response = $this->request->client->fetchEndPoint('put',"{$this->getEntity()}/{$id}", [
+        $response = $this->request->fetchEndPoint('put',"{$this->getEntity()}/{$id}", [
             'json' => $data,
         ]);
 
@@ -127,7 +122,7 @@ abstract class Builder
      */
     public function delete($id)
     {
-        return $this->request->client->fetchEndPoint('delete', "{$this->getEntity()}/{$id}");
+        return $this->request->fetchEndPoint('delete', "{$this->getEntity()}/{$id}");
     }
 
     public function getEntity() {

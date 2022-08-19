@@ -33,8 +33,7 @@ class Request
         $options = array_merge([
             'base_uri' => $baseUri,
             'headers' => $headers,
-        ], $options);
-
+        ], $this->options);
         $this->client = new Client($options);
     }
 
@@ -54,10 +53,12 @@ class Request
         return $this->baseUri;
     }
 
-    public function fetchEndPoint($method, $url = null)
+    public function fetchEndPoint($method, $url = null, $options =[])
     {
-        return $this->handleWithExceptions(function () use ($method, $url) {
-            $response = $this->client->{$method}($this->baseUri.($url ?? ''), $this->options);
+        $options =  array_merge($this->options, $options);
+
+        return $this->handleWithExceptions(function () use ($method, $url, $options) {
+            $response = $this->client->{$method}($this->baseUri.($url ?? ''), $options);
 
             return json_decode((string) $response->getBody());
         });

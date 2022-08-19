@@ -2,7 +2,6 @@
 
 namespace LasseRafn\Dinero\Responses;
 
-use GuzzleHttp\Psr7\Response;
 
 class PaginatedResponse implements ResponseInterface
 {
@@ -16,10 +15,8 @@ class PaginatedResponse implements ResponseInterface
     public $result;
     public $resultWithoutFilter;
 
-    public function __construct(Response $response, $collectionKey = 'Collection')
+    public function __construct( $jsonResponse, $collectionKey = 'Collection')
     {
-        $jsonResponse = json_decode($response->getBody()->getContents());
-
         $this->items = $jsonResponse->{$collectionKey};
 
         $this->page = $jsonResponse->Pagination->Page;

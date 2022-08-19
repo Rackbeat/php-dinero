@@ -18,7 +18,7 @@ class ManualVoucherBuilder extends Builder
      */
     public function book($orgId, $id, $timestamp)
     {
-        return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/vouchers/manuel/' . $id . '/book', [
+        return $this->request->fetchEndPoint('post','vouchers/manuel/' . $id . '/book', [
             'json' => [
                 'Timestamp' => $timestamp,
             ]
