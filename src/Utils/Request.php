@@ -27,14 +27,13 @@ class Request
      */
     public function __construct($baseUri, $options = [], $headers = [], $org = null)
     {
-        $this->options = $options;
         $this->organizationID = $org;
         $this->baseUri = $baseUri . $this->organizationID.'/';
-        $options = array_merge([
+        $this->options = array_merge([
             'base_uri' => $baseUri,
             'headers' => $headers,
-        ], $this->options);
-        $this->client = new Client($options);
+        ], $options);
+        $this->client = new Client($this->options);
     }
 
     /**
