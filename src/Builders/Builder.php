@@ -2,6 +2,7 @@
 
 namespace LasseRafn\Dinero\Builders;
 
+
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use LasseRafn\Dinero\Exceptions\DineroRequestException;
@@ -80,6 +81,9 @@ abstract class Builder
             $response = $this->request->fetchEndPoint( 'post', "{$this->getEntity()}", [
                 'json' => $data,
             ] );
+            if (is_object($response)){
+                $response = json_decode(json_encode($response), true);
+            }
             if ( ! $fakeAttributes ) {
                 $freshData = (array) $this->find( $response[ ( new $this->model( $this->request ) )->getPrimaryKey() ] );
             }
@@ -107,7 +111,7 @@ abstract class Builder
             'json' => $data,
         ]);
 
-        $responseData = json_decode($response->getBody()->getContents());
+        $responseData = json_decode($response);
 
         return new $this->model($responseData);
     }
