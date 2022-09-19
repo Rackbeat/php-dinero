@@ -28,7 +28,7 @@ class InvoiceBuilder extends Builder
      */
     public function book($orgId, $id, $timestamp)
     {
-        return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $id . '/book', [
+        return $this->request->fetchEndPoint('post' , 'invoices/' . $id . '/book', [
             'json' => [
                 'Timestamp' => $timestamp,
             ]
@@ -46,7 +46,7 @@ class InvoiceBuilder extends Builder
      */
     public function send($orgId, $id, array $input)
     {
-        return $this->request->curl->post('https://api.dinero.dk/v1/' . $orgId . '/invoices/' . $id . '/email', [
+        return $this->request->fetchEndPoint('post','invoices/' . $id . '/email', [
             'json' => $input
         ]);
     }

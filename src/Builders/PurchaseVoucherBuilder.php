@@ -18,7 +18,7 @@ class PurchaseVoucherBuilder extends Builder
      */
     public function book($orgId, $id, $timestamp) {
 
-        return $this->request->fetchEndPoint('post','/vouchers/purchase/' . $id . '/book', [
+        return $this->request->fetchEndPoint('post','vouchers/purchase/' . $id . '/book', [
             'json' => [
                 'Timestamp' => $timestamp,
             ]
