@@ -17,9 +17,7 @@ class DepositAccountBuilder extends Builder
     public function get($parameters = '')
     {
         try {
-            $dineroApiResponse = $this->request->curl->get("{$this->entity}{$parameters}");
-
-            $jsonResponse = json_decode($dineroApiResponse->getBody()->getContents());
+            $dineroApiResponse = $this->request->fetchEndPoint('get', "{$this->entity}{$parameters}");
         } catch (ClientException $exception) {
             throw new DineroRequestException($exception);
         } catch (ServerException $exception) {
@@ -30,7 +28,7 @@ class DepositAccountBuilder extends Builder
 
         $items = array_map(function ($item) use ($request) {
             return new $this->model($item);
-        }, $jsonResponse);
+        }, $dineroApiResponse);
 
         return (object)['items' => $items];
     }

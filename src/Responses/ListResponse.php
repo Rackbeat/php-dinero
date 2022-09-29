@@ -2,7 +2,6 @@
 
 namespace LasseRafn\Dinero\Responses;
 
-use GuzzleHttp\Psr7\Response;
 
 class ListResponse implements ResponseInterface
 {
@@ -16,9 +15,8 @@ class ListResponse implements ResponseInterface
 	public $result;
 	public $resultWithoutFilter;
 
-	public function __construct( Response $response, $collectionKey = 'Collection' ) {
-		$jsonResponse = json_decode( $response->getBody()->getContents() );
-
+	public function __construct( $jsonResponse, $collectionKey = 'Collection' )
+	{
 		$this->items = $jsonResponse->{$collectionKey};
 	}
 

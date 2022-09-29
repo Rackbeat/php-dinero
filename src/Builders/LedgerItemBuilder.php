@@ -42,7 +42,7 @@ class LedgerItemBuilder extends Builder
              * https://api.dinero.dk/openapi/index.html#tag/LedgerItems/paths/~1v1~1{organizationId}~1ledgeritems/post
              */
             $url = str_replace('v1', 'v1.1', $this->request->getBaseUrl());
-            $response = $this->request->curl->post("$url{$this->getEntity()}", [
+            $response = $this->request->fetchEndPoint("post", "$url{$this->getEntity()}", [
                 'json' => $data,
             ]);
 

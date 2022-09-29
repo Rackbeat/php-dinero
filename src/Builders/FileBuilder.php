@@ -44,7 +44,7 @@ class FileBuilder extends Builder
      */
     public function create( $data = [], $fakeAttributes = true ) {
         try {
-            $response = $this->request->curl->post( (string)($this->getEntity()), [
+            $response = $this->request->fetchEndPoint( 'post', (string)($this->getEntity()), [
                 'multipart' => $data,
             ] );
 

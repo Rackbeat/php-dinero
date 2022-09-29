@@ -3,54 +3,37 @@
 namespace LasseRafn\Dinero\Utils;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use LasseRafn\Dinero\Exceptions\DineroRequestException;
+use LasseRafn\Dinero\Exceptions\DineroServerException;
 
 class Request
 {
-    /** @var Client  */
-    public $curl;
-    /** @var string|null  */
+    /**
+     * @var \GuzzleHttp\Client
+     */
+    public $client;
     protected $baseUri;
-    /** @var string  */
-    protected $authUri = 'https://authz.dinero.dk/dineroapi/oauth/token';
-
-    public function __construct($clientId = '', $clientSecret = '', $token = null, $org = null, $clientConfig = [], $base_uri = null)
-    {
-        $this->baseUri = ($base_uri ?? 'https://api.dinero.dk/v1') . ($org !== null ? "/{$org}/" : '');
-
-        $encodedClientIdAndSecret = base64_encode("{$clientId}:{$clientSecret}");
-
-        $headers = [];
-
-        if ($token !== null) {
-            $headers['Authorization'] = "Bearer {$token}";
-            $headers['Content-Type'] = 'application/json';
-        } else {
-            $headers['Authorization'] = "Basic {$encodedClientIdAndSecret}";
-            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        }
-
-        $this->curl = new Client(array_merge_recursive([
-            'base_uri' => $this->baseUri,
-            'headers'  => $headers,
-        ], $clientConfig));
-    }
+    protected $options;
+    protected $organizationID;
 
     /**
-     * Return a string with the oAuth url.
+     * Request constructor.
      *
-     * @return string
+     * @param string $baseUri
+     * @param array  $options
+     * @param array  $headers
      */
-    public function getAuthUrl()
+    public function __construct($baseUri, $options = [], $headers = [], $org = null)
     {
-        return $this->authUri;
-    }
-
-    /**
-     * @param $url string
-     */
-    public function setAuthUrl($url) {
-
-        $this->authUri = $url;
+        $this->organizationID = $org;
+        $this->baseUri = $baseUri . $this->organizationID.'/';
+        $this->options = array_merge([
+            'base_uri' => $baseUri,
+            'headers' => $headers,
+        ], $options);
+        $this->client = new Client($this->options);
     }
 
     /**
@@ -67,5 +50,34 @@ class Request
     public function getBaseUrl() {
 
         return $this->baseUri;
+    }
+
+    public function fetchEndPoint($method, $url = null, $options =[])
+    {
+        $options =  array_merge($this->options, $options);
+
+        return $this->handleWithExceptions(function () use ($method, $url, $options) {
+            $response = $this->client->{$method}($this->baseUri.($url ?? ''), $options);
+
+            return json_decode((string) $response->getBody());
+        });
+    }
+
+    /**
+     * @param $callback
+     *
+     * @return mixed
+     * @throws DineroRequestException
+     * @throws DineroServerException
+     */
+    public function handleWithExceptions($callback)
+    {
+        try {
+            return $callback();
+        } catch (ClientException $exception) {
+            throw new DineroRequestException($exception);
+        } catch (ServerException $exception) {
+            throw new DineroServerException($exception);
+        }
     }
 }
