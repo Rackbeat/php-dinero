@@ -6,6 +6,7 @@ use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
 use LasseRafn\Dinero\Exceptions\MethodNotImplemented;
 use LasseRafn\Dinero\Models\File;
+use Illuminate\Support\Facades\Log;
 
 class FileBuilder extends Builder
 {
@@ -52,8 +53,12 @@ class FileBuilder extends Builder
 
             return new $this->model( $this->request, $responseData );
         } catch ( ClientException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException( $exception );
         } catch ( ServerException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException( $exception );
         }
     }

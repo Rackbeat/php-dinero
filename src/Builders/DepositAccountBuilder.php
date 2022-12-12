@@ -5,6 +5,7 @@ namespace LasseRafn\Dinero\Builders;
 use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
 use LasseRafn\Dinero\Models\DepositAccount;
+use Illuminate\Support\Facades\Log;
 
 class DepositAccountBuilder extends Builder
 {
@@ -19,8 +20,12 @@ class DepositAccountBuilder extends Builder
         try {
             $dineroApiResponse = $this->request->fetchEndPoint('get', "{$this->entity}{$parameters}");
         } catch (ClientException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException($exception);
         } catch (ServerException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException($exception);
         }
 

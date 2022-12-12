@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ServerException;
 use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
 use LasseRafn\Dinero\Models\EntryAccount;
+use Illuminate\Support\Facades\Log;
 
 class EntryAccountBuilder extends Builder
 {
@@ -21,8 +22,12 @@ class EntryAccountBuilder extends Builder
         try {
             $dineroApiResponse = $this->request->fetchEndPoint('get', "{$this->entity}{$parameters}");
         } catch (ClientException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException($exception);
         } catch (ServerException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException($exception);
         }
 
