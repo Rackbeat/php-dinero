@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
+use Illuminate\Support\Facades\Log;
 
 class Request
 {
@@ -75,8 +76,12 @@ class Request
         try {
             return $callback();
         } catch (ClientException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException($exception);
         } catch (ServerException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException($exception);
         }
     }

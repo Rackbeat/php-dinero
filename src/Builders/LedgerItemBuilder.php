@@ -8,6 +8,7 @@ use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
 use LasseRafn\Dinero\Exceptions\MethodNotImplemented;
 use LasseRafn\Dinero\Models\LedgerItem;
+use Illuminate\Support\Facades\Log;
 
 class LedgerItemBuilder extends Builder
 {
@@ -56,8 +57,12 @@ class LedgerItemBuilder extends Builder
 
             return new $this->model($this->request, $mergedData);
         } catch (ClientException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException($exception);
         } catch (ServerException $exception) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException($exception);
         }
     }

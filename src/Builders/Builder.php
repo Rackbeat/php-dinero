@@ -5,6 +5,7 @@ namespace LasseRafn\Dinero\Builders;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use Illuminate\Support\Facades\Log;
 use LasseRafn\Dinero\Exceptions\DineroRequestException;
 use LasseRafn\Dinero\Exceptions\DineroServerException;
 use LasseRafn\Dinero\Responses\PaginatedResponse;
@@ -35,8 +36,12 @@ abstract class Builder
             $response     = $this->request->fetchEndPoint( 'get', "{$this->entity}/{$id}" );
             return new $this->model($response);
         } catch ( ClientException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException( $exception );
         } catch ( ServerException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException( $exception );
         }
     }
@@ -52,8 +57,12 @@ abstract class Builder
             $dineroApiResponse = $this->request->fetchEndPoint( 'get', "{$this->entity}{$parameters}" );
             $response = new $this->responseClass( $dineroApiResponse, $this->getCollectionName() );
         } catch ( ClientException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException( $exception );
         } catch ( ServerException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException( $exception );
         }
 
@@ -92,8 +101,12 @@ abstract class Builder
 
             return new $this->model($mergedData);
         } catch ( ClientException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroRequestException( $exception );
         } catch ( ServerException $exception ) {
+            Log::debug('ERROR: '. $exception->getMessage());
+
             throw new DineroServerException( $exception );
         }
     }

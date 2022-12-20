@@ -17,8 +17,6 @@ class DineroRequestException extends ClientException
 			if ( ! $messageResponse ) {
 				$message = $clientException->getResponse()->getBody()->getContents();
 			} else {
-				$message = '';
-
 				if ( isset( $messageResponse->message ) ) {
 					$message = "{$messageResponse->message}:";
 				} elseif ( isset( $messageResponse->error ) ) {
