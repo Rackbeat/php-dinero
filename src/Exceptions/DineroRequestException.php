@@ -11,7 +11,7 @@ class DineroRequestException extends ClientException
 	public function __construct( ClientException $clientException ) {
 		$message = $clientException->getMessage();
 
-		if ( $clientException->hasResponse() ) {
+		if ( $clientException->hasResponse() && strpos($message, 'Validation Error:') !== 0) {
 			$messageResponse = json_decode( $clientException->getResponse()->getBody()->getContents() );
 
 			if ( ! $messageResponse ) {
