@@ -15,8 +15,6 @@ class DineroServerException extends ServerException
                                                             ->getBody()
                                                             ->getContents());
 
-            $message = '';
-
             if (isset($messageResponse->message)) {
                 $message = "{$messageResponse->message}:";
             } elseif (isset($messageResponse->error)) {
