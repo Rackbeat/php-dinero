@@ -4,15 +4,17 @@ namespace LasseRafn\Dinero\Exceptions;
 
 use GuzzleHttp\Exception\ClientException;
 
-class DineroRequestException extends ClientException
+class DineroRequestException extends \Exception
 {
 	public $validationErrors = [];
 
 	public function __construct( ClientException $clientException )
 	{
 		$message = $clientException->getMessage();
+		$code = $clientException->getCode();
 
-		if ( $clientException->hasResponse() ) {
+		if ( $clientException->hasResponse() && $clientException->getResponse() !== null ) {
+			$code = $clientException->getResponse()->getStatusCode();
 			$responseBody = $clientException->getResponse()->getBody()->getContents();
 
 			$messageResponse = json_decode( $responseBody );
@@ -21,9 +23,9 @@ class DineroRequestException extends ClientException
 				$message = $responseBody;
 			} else {
 				if ( isset( $messageResponse->message ) ) {
-					$message = "{$messageResponse->message}:";
+					$message = "{$messageResponse->message}: ";
 				} elseif ( isset( $messageResponse->error ) ) {
-					$message = "{$messageResponse->error}:";
+					$message = "{$messageResponse->error}: ";
 				}
 
 				if ( isset( $messageResponse->validationErrors ) ) {
@@ -45,11 +47,6 @@ class DineroRequestException extends ClientException
 			}
 		}
 
-		$request        = $clientException->getRequest();
-		$response       = $clientException->getResponse();
-		$previous       = $clientException->getPrevious();
-		$handlerContext = $clientException->getHandlerContext();
-
-		parent::__construct( $message, $request, $response, $previous, $handlerContext );
+		parent::__construct( $message, $code, $clientException->getPrevious() );
 	}
 }
