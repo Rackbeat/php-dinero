@@ -12,11 +12,13 @@ class DineroRequestException extends ClientException
 	{
 		$message = $clientException->getMessage();
 
-		if ( $clientException->hasResponse() && ( strpos( $message, 'Validation Error:' ) !== 0 || strpos( $message, 'Not found' ) !== 0 ) ) {
-			$messageResponse = json_decode( $clientException->getResponse()->getBody()->getContents() );
+		if ( $clientException->hasResponse() ) {
+			$responseBody = $clientException->getResponse()->getBody()->getContents();
+
+			$messageResponse = json_decode( $responseBody );
 
 			if ( ! $messageResponse ) {
-				$message = $clientException->getResponse()->getBody()->getContents();
+				$message = $responseBody;
 			} else {
 				if ( isset( $messageResponse->message ) ) {
 					$message = "{$messageResponse->message}:";
