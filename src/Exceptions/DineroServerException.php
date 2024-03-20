@@ -4,41 +4,47 @@ namespace LasseRafn\Dinero\Exceptions;
 
 use GuzzleHttp\Exception\ServerException;
 
-class DineroServerException extends ServerException
+class DineroServerException extends \Exception
 {
-    public function __construct(ServerException $clientException)
+    public function __construct(ServerException $serverException)
     {
-        $message = $clientException->getMessage();
+        $message = $serverException->getMessage();
+	    $code = $serverException->getCode();
 
-        if ($clientException->hasResponse()) {
-            $messageResponse = json_decode($clientException->getResponse()
-                                                            ->getBody()
-                                                            ->getContents());
+	    if ( $serverException->hasResponse() && $serverException->getResponse() !== null ) {
+		    $code = $serverException->getResponse()->getStatusCode();
+		    $responseBody = $serverException->getResponse()->getBody()->getContents();
 
-            if (isset($messageResponse->message)) {
-                $message = "{$messageResponse->message}:";
-            } elseif (isset($messageResponse->error)) {
-                $message = "{$messageResponse->error}:";
-            }
+		    $messageResponse = json_decode( $responseBody );
 
-            if (isset($messageResponse->validationErrors)) {
-                foreach ($messageResponse->validationErrors as $key => $validationError) {
-                    $message .= "{$key}: {$validationError}\n";
-                }
-            }
+		    if ( ! $messageResponse ) {
+			    $message = $responseBody;
+		    } else {
+			    if ( isset( $messageResponse->message ) ) {
+				    $message = "{$messageResponse->message}: ";
+			    } elseif ( isset( $messageResponse->error ) ) {
+				    $message = "{$messageResponse->error}: ";
+			    }
 
-            if (isset($messageResponse->languageSpecificMessages)) {
-                foreach ($messageResponse->languageSpecificMessages as $error) {
-                    $message .= "{$error->property}: {$error->message}\n";
-                }
-            }
-        }
+			    if ( isset( $messageResponse->validationErrors ) ) {
+				    foreach ( $messageResponse->validationErrors as $key => $validationError ) {
+					    $this->validationErrors[ $key ][] = $validationError;
+					    $message                          .= "{$key}: {$validationError}\n";
+				    }
+			    }
 
-        $request = $clientException->getRequest();
-        $response = $clientException->getResponse();
-        $previous = $clientException->getPrevious();
-        $handlerContext = $clientException->getHandlerContext();
+			    if ( isset( $messageResponse->languageSpecificMessages ) ) {
+				    foreach ( $messageResponse->languageSpecificMessages as $error ) {
+					    $message .= "{$error->property}: {$error->message}\n";
+				    }
+			    }
 
-        parent::__construct($message, $request, $response, $previous, $handlerContext);
+			    if ( $message === '' ) {
+				    $message = json_encode( $messageResponse );
+			    }
+		    }
+	    }
+
+        parent::__construct($message, $code, $serverException->getPrevious());
     }
 }
