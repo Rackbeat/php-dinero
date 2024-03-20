@@ -8,10 +8,11 @@ class DineroRequestException extends ClientException
 {
 	public $validationErrors = [];
 
-	public function __construct( ClientException $clientException ) {
+	public function __construct( ClientException $clientException )
+	{
 		$message = $clientException->getMessage();
 
-		if ( $clientException->hasResponse() && (strpos($message, 'Validation Error:') !== 0  || strpos($message, 'Not found') !== 0)) {
+		if ( $clientException->hasResponse() && ( strpos( $message, 'Validation Error:' ) !== 0 || strpos( $message, 'Not found' ) !== 0 ) ) {
 			$messageResponse = json_decode( $clientException->getResponse()->getBody()->getContents() );
 
 			if ( ! $messageResponse ) {
