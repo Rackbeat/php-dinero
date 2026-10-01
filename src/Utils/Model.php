@@ -2,6 +2,7 @@
 
 namespace LasseRafn\Dinero\Utils;
 
+#[\AllowDynamicProperties]
 class Model
 {
     protected $entity;
